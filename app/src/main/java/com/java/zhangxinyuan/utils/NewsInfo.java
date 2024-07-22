@@ -61,8 +61,17 @@ public class NewsInfo {
         private String category;
         private List<WhoDTO> who;
 
-        public String getImage() {
-            return image;
+        public String[] getImage() {
+            if(image==null||image.isEmpty()) {
+                return new String[0];
+            }else{
+                String[] foo=image.substring(1,image.length()-1).split(",");
+                for (int i = 0; i < foo.length; i++) {
+                    foo[i] = foo[i].replaceAll("\"", ""); // 去除引号
+                }
+                if(foo.length==1&& foo[0].isEmpty())return new String [0];
+                return foo;
+            }
         }
 
         public void setImage(String image) {

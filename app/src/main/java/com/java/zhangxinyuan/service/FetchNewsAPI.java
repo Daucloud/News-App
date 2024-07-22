@@ -23,6 +23,7 @@ public class FetchNewsAPI {
             categories="娱乐,军事,教育,文化,健康,财经,体育,汽车,科技,社会";
         }
         String url = baseUrl + "size=" + size + "&startDate=" + startDate + "&endDate=" + endDate + "&words=" + words + "&categories=" + categories + "&page=" + page;
+        Log.d("-----------------------------", "getHttpData: "+url);
         Request request = new Request.Builder()
                 .url(url)
                 .get()
