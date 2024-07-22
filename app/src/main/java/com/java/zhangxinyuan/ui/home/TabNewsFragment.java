@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.java.zhangxinyuan.adapter.NewsListAdapter;
@@ -33,6 +34,7 @@ public class TabNewsFragment extends Fragment {
     private RecyclerView recyclerView;
     private NewsListAdapter newsListAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private ProgressBar progressBar;
 
 
     public static TabNewsFragment newInstance(String param1) {
@@ -54,6 +56,7 @@ public class TabNewsFragment extends Fragment {
         View root = binding.getRoot();
         recyclerView = binding.newsRecyclerView;
         swipeRefreshLayout = binding.swipeRefreshLayout;
+        progressBar=binding.progressBar;
         newsListAdapter = new NewsListAdapter(this);
         recyclerView.setAdapter(newsListAdapter);
 
@@ -85,6 +88,8 @@ public class TabNewsFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(
                 () -> {
                     endDate.set(Assistant.getEndDate());
+                    pageSize.set(1);
+                    page.set(Integer.toString(pageSize.get()));
                     fetchNewsAPI.getHttpData(size, startDate, endDate.get(), words, categories, page.get(), new FetchNewsAPI.OnNewsFetchedListener() {
                         @Override
                         public void onSuccess(List<NewsInfo.DataDTO> newsList) {
@@ -102,6 +107,33 @@ public class TabNewsFragment extends Fragment {
                     });
                 }
         );
+
+        //设置上拉加载的监听器
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                   progressBar.setVisibility(View.VISIBLE);
+                    page.set(Integer.toString(pageSize.get()+1));
+                    fetchNewsAPI.getHttpData(size, startDate, endDate.get(), words, categories, page.get(), new FetchNewsAPI.OnNewsFetchedListener() {
+                        @Override
+                        public void onSuccess(List<NewsInfo.DataDTO> newsList) {
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                newsListAdapter.setListData(newsList);
+                                pageSize.getAndIncrement();
+                                progressBar.setVisibility(View.GONE);
+                            });
+                        }
+                        @Override
+                        public void onFailure(Exception e) {
+                            Toast.makeText(getActivity(), "新闻获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    });
+                }
+            }
+        });
         return root;
     }
 }
