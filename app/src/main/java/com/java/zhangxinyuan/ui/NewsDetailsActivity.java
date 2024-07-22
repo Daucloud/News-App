@@ -1,7 +1,7 @@
 package com.java.zhangxinyuan.ui;
-
 import static com.java.zhangxinyuan.utils.Assistant.getSummary;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,6 +13,7 @@ import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,6 +38,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
     private TextView title, source, time, summary, content;
     private ImageView image;
     private Toolbar toolbar;
+    private Button button;
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -56,6 +58,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
         summary = binding.newsSummary;
         content = binding.newsContent;
         toolbar = binding.toolbar;
+        button=binding.searchButton;
 
         assert dataDTO != null;
         title.setText(dataDTO.getTitle());
@@ -85,6 +88,17 @@ public class NewsDetailsActivity extends AppCompatActivity {
 
         // 异步获取摘要
         getSummaryInBackground(dataDTO.getContent());
+
+        //处理button点击
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 创建一个Intent来启动SearchResultsActivity
+                Intent intent = new Intent(NewsDetailsActivity.this, SearchActivity.class);
+                // 启动目标活动
+                startActivity(intent);
+            }
+        });
     }
 
     private void getSummaryInBackground(String content) {

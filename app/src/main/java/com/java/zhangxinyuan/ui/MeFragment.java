@@ -1,4 +1,4 @@
-package com.java.zhangxinyuan.ui.me;
+package com.java.zhangxinyuan.ui;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,9 +8,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.java.zhangxinyuan.databinding.FragmentMeBinding;
 import com.java.zhangxinyuan.databinding.FragmentMeBinding;
 
 public class MeFragment extends Fragment {
@@ -19,14 +17,12 @@ public class MeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        MeViewModel meViewModel =
-                new ViewModelProvider(this).get(MeViewModel.class);
 
         binding = FragmentMeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textMe;
-        meViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        TextView textView = binding.textMe;
+        textView.setText("meFragment");
         return root;
     }
 

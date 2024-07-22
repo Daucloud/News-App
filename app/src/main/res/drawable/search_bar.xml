@@ -5,4 +5,8 @@
     <corners android:radius="35dp"/>
     <!-- 使用填充色 -->
     <solid android:color="@color/grey"/>
+    <!-- 添加边框 -->
+    <stroke
+        android:width="2dp"
+        android:color="@color/white"/>
 </shape>

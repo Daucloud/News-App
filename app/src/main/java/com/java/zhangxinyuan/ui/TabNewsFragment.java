@@ -1,4 +1,4 @@
-package com.java.zhangxinyuan.ui.home;
+package com.java.zhangxinyuan.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,7 +20,6 @@ import android.widget.Toast;
 import com.java.zhangxinyuan.adapter.NewsListAdapter;
 import com.java.zhangxinyuan.databinding.FragmentTabsNewsBinding;
 import com.java.zhangxinyuan.service.FetchNewsAPI;
-import com.java.zhangxinyuan.ui.NewsDetailsActivity;
 import com.java.zhangxinyuan.utils.Assistant;
 import com.java.zhangxinyuan.utils.NewsInfo;
 

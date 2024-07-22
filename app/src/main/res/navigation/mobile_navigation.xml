@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.java.zhangxinyuan.ui.home.HomeFragment"
+        android:name="com.java.zhangxinyuan.ui.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_me"
-        android:name="com.java.zhangxinyuan.ui.me.MeFragment"
+        android:name="com.java.zhangxinyuan.ui.MeFragment"
         android:label="@string/title_me"
         tools:layout="@layout/fragment_me" />
 </navigation>

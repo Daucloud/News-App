@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.java.zhangxinyuan.R;
-import com.java.zhangxinyuan.ui.home.TabNewsFragment;
+import com.java.zhangxinyuan.ui.TabNewsFragment;
 import com.java.zhangxinyuan.utils.NewsInfo;
 
 import java.util.ArrayList;
