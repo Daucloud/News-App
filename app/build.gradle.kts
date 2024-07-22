@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(libs.material3)
     implementation(libs.activity)
+    implementation(libs.databinding.runtime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -81,4 +82,5 @@ dependencies {
     implementation(libs.com.fasterxml.jackson.core.jackson.databind)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest) // Use the latest version
+    implementation(libs.oapi.java.sdk)
 }

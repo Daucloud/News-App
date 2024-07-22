@@ -1,9 +1,10 @@
 package com.java.zhangxinyuan.utils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NewsInfo {
+public class NewsInfo implements Serializable{
     private String pageSize;
     private Integer total;
     private List<DataDTO> data;
@@ -41,7 +42,7 @@ public class NewsInfo {
         this.currentPage = currentPage;
     }
 
-    public static class DataDTO {
+    public static class DataDTO implements Serializable {
         private String image;
         private String publishTime;
         private List<KeywordsDTO> keywords;
@@ -229,7 +230,7 @@ public class NewsInfo {
             this.who = who;
         }
 
-        public static class KeywordsDTO {
+        public static class KeywordsDTO implements Serializable{
             private Double score;
             private String word;
 
@@ -250,7 +251,7 @@ public class NewsInfo {
             }
         }
 
-        public static class WhenDTO {
+        public static class WhenDTO implements Serializable{
             private Double score;
             private String word;
 
@@ -271,7 +272,7 @@ public class NewsInfo {
             }
         }
 
-        public static class PersonsDTO {
+        public static class PersonsDTO implements Serializable{
             private Integer count;
             private String linkedURL;
             private String mention;
@@ -301,7 +302,7 @@ public class NewsInfo {
             }
         }
 
-        public static class OrganizationsDTO {
+        public static class OrganizationsDTO implements Serializable{
             private Integer count;
             private String linkedURL;
             private String mention;
@@ -331,7 +332,7 @@ public class NewsInfo {
             }
         }
 
-        public static class LocationsDTO {
+        public static class LocationsDTO implements Serializable{
             private Double lng;
             private Integer count;
             private String linkedURL;
@@ -379,7 +380,7 @@ public class NewsInfo {
             }
         }
 
-        public static class WhoDTO {
+        public static class WhoDTO implements Serializable{
             private Double score;
             private String word;
 

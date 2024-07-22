@@ -20,13 +20,6 @@ public class SearchActivity extends AppCompatActivity {
         view=binding.getRoot();
         setContentView(view);
         toolbar=binding.toolbar;
-
-        // Hide the top ActionBar
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
-
-        //返回主界面
         toolbar.setNavigationOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {

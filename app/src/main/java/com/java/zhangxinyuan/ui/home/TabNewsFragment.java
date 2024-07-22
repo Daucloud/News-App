@@ -1,5 +1,6 @@
 package com.java.zhangxinyuan.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import com.java.zhangxinyuan.adapter.NewsListAdapter;
 import com.java.zhangxinyuan.databinding.FragmentTabsNewsBinding;
 import com.java.zhangxinyuan.service.FetchNewsAPI;
+import com.java.zhangxinyuan.ui.NewsDetailsActivity;
 import com.java.zhangxinyuan.utils.Assistant;
 import com.java.zhangxinyuan.utils.NewsInfo;
 
@@ -66,7 +68,7 @@ public class TabNewsFragment extends Fragment {
         AtomicReference<String> endDate = new AtomicReference<>(Assistant.getEndDate());
         String words = "";
         String categories = requireArguments().getString(ARG_PARAM1);
-        AtomicReference<String> page = new AtomicReference<>(Integer.toString(pageSize.get()));
+        AtomicReference<String> page = new AtomicReference<>(Integer.toString(100));
 
         //获取新闻
         FetchNewsAPI fetchNewsAPI = new FetchNewsAPI();
@@ -134,6 +136,19 @@ public class TabNewsFragment extends Fragment {
                 }
             }
         });
+
+        //设置recyclerView的点击事件
+        newsListAdapter.setOnItemClickListener(new NewsListAdapter.OnItemClickListener(){
+            @Override
+            public void onItemClick(NewsInfo.DataDTO dataDTO, int position) {
+                Log.d("-----------------------------", "onItemClick: recyclerView clicked");
+                Intent intent = new Intent(getActivity(), NewsDetailsActivity.class);
+                intent.putExtra("dataDTO", dataDTO);
+                startActivity(intent);
+            }
+        });
+
+
         return root;
     }
 }
