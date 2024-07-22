@@ -20,6 +20,7 @@
         android:id="@+id/image_one_image"
         android:layout_width="80dp"
         android:layout_height="80dp"
+        android:scaleType="fitCenter"
         android:layout_alignParentEnd="true"
         android:src="@drawable/ic_launcher_background" />
     <TextView

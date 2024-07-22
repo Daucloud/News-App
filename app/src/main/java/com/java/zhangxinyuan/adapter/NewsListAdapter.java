@@ -66,15 +66,15 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyHold
         holder.title.setText(dataDTO.getTitle());
         holder.description.setText(dataDTO.getPublisher()+" "+dataDTO.getPublishTime());
         //加载图片
-        String []images=dataDTO.getImage();
+        ArrayList<String>images=dataDTO.getImage();
         switch (holder.type){
             case 1:
-                Glide.with(mContext).load(images[0]).error(R.drawable.baseline_image_not_supported_24).into(holder.image1);
+                Glide.with(mContext).load(images.get(0)).error(R.drawable.baseline_image_not_supported_24).into(holder.image1);
                 break;
             case 3:
-                Glide.with(mContext).load(images[0]).error(R.drawable.baseline_image_not_supported_24).into(holder.image1);
-                Glide.with(mContext).load(images[1]).error(R.drawable.baseline_image_not_supported_24).into(holder.image2);
-                Glide.with(mContext).load(images[2]).error(R.drawable.baseline_image_not_supported_24).into(holder.image3);
+                Glide.with(mContext).load(images.get(0)).error(R.drawable.baseline_image_not_supported_24).into(holder.image1);
+                Glide.with(mContext).load(images.get(1)).error(R.drawable.baseline_image_not_supported_24).into(holder.image2);
+                Glide.with(mContext).load(images.get(2)).error(R.drawable.baseline_image_not_supported_24).into(holder.image3);
                 break;
         }
     }
@@ -117,7 +117,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyHold
 
     @Override
     public int getItemViewType(int position) {
-        int size=mDataDTOList.get(position).getImage().length;
+        int size=mDataDTOList.get(position).getImage().size();
         switch(size){
             case 0:
                 return  0;

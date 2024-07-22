@@ -1,5 +1,6 @@
 package com.java.zhangxinyuan.utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NewsInfo {
@@ -61,16 +62,22 @@ public class NewsInfo {
         private String category;
         private List<WhoDTO> who;
 
-        public String[] getImage() {
-            if(image==null||image.isEmpty()) {
-                return new String[0];
-            }else{
-                String[] foo=image.substring(1,image.length()-1).split(",");
-                for (int i = 0; i < foo.length; i++) {
-                    foo[i] = foo[i].replaceAll("\"", ""); // 去除引号
+
+        public ArrayList<String> getImage() {
+            if (image == null || image.isEmpty()) {
+                return new ArrayList<>();
+            } else {
+                String[] foo = image.substring(1, image.length() - 1).split(",");
+                ArrayList<String> result = new ArrayList<>();
+
+                for (String element : foo) {
+                    String trimmedElement = element.replaceAll("\"", "").trim(); // 去除引号并去除首尾空格
+                    if (!trimmedElement.isEmpty()) {
+                        result.add(trimmedElement);
+                    }
                 }
-                if(foo.length==1&& foo[0].isEmpty())return new String [0];
-                return foo;
+
+                return result;
             }
         }
 
