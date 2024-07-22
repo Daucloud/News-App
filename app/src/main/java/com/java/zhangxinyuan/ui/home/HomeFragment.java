@@ -1,12 +1,12 @@
 package com.java.zhangxinyuan.ui.home;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -16,17 +16,14 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import com.java.zhangxinyuan.R;
 import com.java.zhangxinyuan.databinding.FragmentHomeBinding;
-import com.java.zhangxinyuan.service.FetchNewsAPI;
-import com.java.zhangxinyuan.utils.NewsInfo;
-
-import java.util.List;
+import com.java.zhangxinyuan.ui.SearchActivity;
 
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private ViewPager2 viewPager2;
+    private SearchView searchView;
     private final String[] categories= {"全部","娱乐", "军事", "教育", "文化", "健康", "财经", "体育", "汽车", "科技", "社会"};
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -38,6 +35,7 @@ public class HomeFragment extends Fragment {
         View root = binding.getRoot();
 
         final TextView textView = binding.textHome;
+        searchView=binding.homeSearchView;
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
         //初始化控件
@@ -84,6 +82,20 @@ public class HomeFragment extends Fragment {
             }
         });
         tabLayoutMediator.attach();
+
+        //SearchView点击事件：跳转到一个新的搜索界面
+        // 在MainActivity中找到SearchView
+
+// 为SearchView设置点击事件监听器
+searchView.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        // 创建一个Intent来启动SearchResultsActivity
+        Intent intent = new Intent(getActivity(), SearchActivity.class);
+        // 启动目标活动
+        startActivity(intent);
+    }
+});
 
         return root;
     }

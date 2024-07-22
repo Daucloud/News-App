@@ -4,4 +4,22 @@
     <item name="android:textSize">18sp</item>
     <!-- 可以根据需要调整字体大小 -->
 </style>
+    <!-- 自定义主题 -->
+<style name="CustomTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <!-- 自定义 Toolbar 样式 -->
+    <item name="toolbarStyle">@style/CustomToolbarStyle</item>
+    <!-- 自定义 Button 样式 -->
+    <item name="buttonStyle">@style/CustomButtonStyle</item>
+</style>
+
+<!-- 自定义 Toolbar 样式 -->
+<style name="CustomToolbarStyle" parent="Widget.AppCompat.Toolbar">
+    <item name="android:background">@color/red_500</item>
+</style>
+
+<!-- 自定义 Button 样式 -->
+<style name="CustomButtonStyle" parent="Widget.AppCompat.Button">
+    <item name="android:background">@color/grey</item>
+    <item name="android:textColor">@android:color/white</item>
+</style>
 </resources>
