@@ -1,5 +1,6 @@
-package com.java.zhangxinyuan.adapter;
+package com.java.zhangxinyuan.utils.adapter;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.java.zhangxinyuan.R;
-import com.java.zhangxinyuan.ui.TabNewsFragment;
 import com.java.zhangxinyuan.utils.NewsInfo;
 
 import java.util.ArrayList;
@@ -20,10 +20,10 @@ import java.util.List;
 
 public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyHolder> {
     private List<NewsInfo.DataDTO> mDataDTOList = new ArrayList<>();
-    private TabNewsFragment mContext;
+    private Context mContext;
     private static final String TAG = "NewsListAdapter";
 
-    public NewsListAdapter(TabNewsFragment context) {
+    public NewsListAdapter(Context context) {
         this.mContext = context;
     }
 

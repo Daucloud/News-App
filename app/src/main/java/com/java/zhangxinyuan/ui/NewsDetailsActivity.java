@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.java.zhangxinyuan.R;
 
 import androidx.appcompat.widget.Toolbar;
@@ -24,6 +25,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.java.zhangxinyuan.databinding.ActivityNewsDetailsBinding;
+import com.java.zhangxinyuan.utils.HistoryManager;
 import com.java.zhangxinyuan.utils.NewsInfo;
 
 import java.util.ArrayList;
@@ -99,6 +101,11 @@ public class NewsDetailsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        //在数据库中添加一条元素
+        Gson gson=new Gson();
+        HistoryManager historyManager=new HistoryManager(this);
+        historyManager.insertHistory(dataDTO.getNewsID(), gson.toJson(dataDTO));
     }
 
     private void getSummaryInBackground(String content) {

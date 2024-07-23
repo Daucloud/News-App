@@ -1,5 +1,6 @@
 package com.java.zhangxinyuan.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +22,27 @@ public class MeFragment extends Fragment {
         binding = FragmentMeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        TextView textView = binding.textMe;
-        textView.setText("meFragment");
+        binding.btnHistory.setSelected(true);
+        binding.btnCollection.setSelected(true);
+
+        binding.btnHistory.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO: 跳转到历史记录页面
+                Intent intent=new Intent(getContext(),HistoryActivity.class);
+                                startActivity(intent);
+            }
+        });
+
+        binding.btnCollection.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO: 跳转到收藏页面
+            }
+        });
+
         return root;
     }
 

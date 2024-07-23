@@ -10,24 +10,17 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.java.zhangxinyuan.R;
-import com.java.zhangxinyuan.adapter.NewsListAdapter;
-import com.java.zhangxinyuan.adapter.SearchedNewsListAdapter;
-import com.java.zhangxinyuan.databinding.ActivitySearchBinding;
 import com.java.zhangxinyuan.databinding.ActivitySearchedNewsBinding;
-import com.java.zhangxinyuan.service.FetchNewsAPI;
+import com.java.zhangxinyuan.utils.FetchNewsAPI;
 import com.java.zhangxinyuan.utils.Assistant;
 import com.java.zhangxinyuan.utils.NewsInfo;
+import com.java.zhangxinyuan.utils.adapter.NewsListAdapter;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,7 +32,7 @@ public class SearchedNewsActivity extends AppCompatActivity {
         RecyclerView recyclerView;
         SwipeRefreshLayout swipeRefreshLayout;
         ProgressBar progressBar;
-        SearchedNewsListAdapter searchedNewsListAdapter;
+        NewsListAdapter newListAdapter;
         Toolbar toolbar;
 
 
@@ -51,8 +44,8 @@ public class SearchedNewsActivity extends AppCompatActivity {
         recyclerView = binding.newsRecyclerView;
         swipeRefreshLayout = binding.swipeRefreshLayout;
         progressBar=binding.progressBar;
-        searchedNewsListAdapter = new SearchedNewsListAdapter(this);
-        recyclerView.setAdapter(searchedNewsListAdapter);
+        newListAdapter = new NewsListAdapter(this);
+        recyclerView.setAdapter(newListAdapter);
         toolbar=binding.toolbar;
 
         AtomicInteger pageSize = new AtomicInteger(1);
@@ -69,7 +62,7 @@ public class SearchedNewsActivity extends AppCompatActivity {
             @Override
             public void onSuccess(List<NewsInfo.DataDTO> newsList) {
                 new Handler(Looper.getMainLooper()).post(() -> {
-                    searchedNewsListAdapter.setListData(newsList);
+                    newListAdapter.setListData(newsList);
                     Log.d("-------------------", "onSuccess: "+newsList.size());
                 });
             }
@@ -83,7 +76,7 @@ public class SearchedNewsActivity extends AppCompatActivity {
         });
 
         //设置下拉刷新的监听器
-        com.java.zhangxinyuan.service.FetchNewsAPI fetchNewsAPI = new FetchNewsAPI();
+        com.java.zhangxinyuan.utils.FetchNewsAPI fetchNewsAPI = new FetchNewsAPI();
         swipeRefreshLayout.setOnRefreshListener(
                 () -> {
                     endDate.set(Assistant.getEndDate());
@@ -93,7 +86,7 @@ public class SearchedNewsActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(List<NewsInfo.DataDTO> newsList) {
                             new Handler(Looper.getMainLooper()).post(() -> {
-                                searchedNewsListAdapter.setListData(newsList);
+                                newListAdapter.setListData(newsList);
                                 Toast.makeText(SearchedNewsActivity.this, "新闻刷新成功", Toast.LENGTH_SHORT).show();
                                 swipeRefreshLayout.setRefreshing(false);
                             });
@@ -119,7 +112,7 @@ public class SearchedNewsActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(List<NewsInfo.DataDTO> newsList) {
                             new Handler(Looper.getMainLooper()).post(() -> {
-                                searchedNewsListAdapter.setListData(newsList);
+                                newListAdapter.setListData(newsList);
                                 pageSize.getAndIncrement();
                                 progressBar.setVisibility(View.GONE);
                             });
@@ -135,7 +128,7 @@ public class SearchedNewsActivity extends AppCompatActivity {
         });
 
         //设置recyclerView的点击事件
-        searchedNewsListAdapter.setOnItemClickListener(new SearchedNewsListAdapter.OnItemClickListener(){
+        newListAdapter.setOnItemClickListener(new NewsListAdapter.OnItemClickListener(){
             @Override
             public void onItemClick(NewsInfo.DataDTO dataDTO, int position) {
                 Log.d("-----------------------------", "onItemClick: recyclerView clicked");

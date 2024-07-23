@@ -17,9 +17,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.java.zhangxinyuan.adapter.NewsListAdapter;
+import com.java.zhangxinyuan.utils.adapter.NewsListAdapter;
 import com.java.zhangxinyuan.databinding.FragmentTabsNewsBinding;
-import com.java.zhangxinyuan.service.FetchNewsAPI;
+import com.java.zhangxinyuan.utils.FetchNewsAPI;
 import com.java.zhangxinyuan.utils.Assistant;
 import com.java.zhangxinyuan.utils.NewsInfo;
 
@@ -58,7 +58,7 @@ public class TabNewsFragment extends Fragment {
         recyclerView = binding.newsRecyclerView;
         swipeRefreshLayout = binding.swipeRefreshLayout;
         progressBar=binding.progressBar;
-        newsListAdapter = new NewsListAdapter(this);
+        newsListAdapter = new NewsListAdapter(getContext());
         recyclerView.setAdapter(newsListAdapter);
 
         AtomicInteger pageSize = new AtomicInteger(1);

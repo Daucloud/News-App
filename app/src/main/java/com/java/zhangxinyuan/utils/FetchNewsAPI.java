@@ -1,12 +1,10 @@
-package com.java.zhangxinyuan.service;
+package com.java.zhangxinyuan.utils;
 
 import android.util.Log;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
-import com.java.zhangxinyuan.utils.NewsInfo;
 
 import java.io.IOException;
 import java.util.List;
