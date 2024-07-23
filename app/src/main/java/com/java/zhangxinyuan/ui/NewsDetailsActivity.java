@@ -1,8 +1,10 @@
 package com.java.zhangxinyuan.ui;
+
 import static com.java.zhangxinyuan.utils.Assistant.getSummary;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -11,11 +13,13 @@ import com.java.zhangxinyuan.R;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.DataBindingUtil;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -25,14 +29,18 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.java.zhangxinyuan.databinding.ActivityNewsDetailsBinding;
+import com.java.zhangxinyuan.utils.DBHelper;
 import com.java.zhangxinyuan.utils.HistoryManager;
 import com.java.zhangxinyuan.utils.NewsInfo;
+import com.java.zhangxinyuan.utils.SummaryManager;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.VideoView;
 
 public class NewsDetailsActivity extends AppCompatActivity {
     private NewsInfo.DataDTO dataDTO;
@@ -41,6 +49,8 @@ public class NewsDetailsActivity extends AppCompatActivity {
     private ImageView image;
     private Toolbar toolbar;
     private Button button;
+    private VideoView videoView;
+    private SummaryManager summaryManager;
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -60,7 +70,8 @@ public class NewsDetailsActivity extends AppCompatActivity {
         summary = binding.newsSummary;
         content = binding.newsContent;
         toolbar = binding.toolbar;
-        button=binding.searchButton;
+        button = binding.searchButton;
+        videoView = binding.newsVideo;
 
         assert dataDTO != null;
         title.setText(dataDTO.getTitle());
@@ -69,9 +80,14 @@ public class NewsDetailsActivity extends AppCompatActivity {
         content.setText(dataDTO.getContent());
 
         ArrayList<String> images = dataDTO.getImage();
-        if (images.isEmpty()) {
-            image.setVisibility(View.GONE);
-        } else {
+        String videos = dataDTO.getVideo();
+        if (videos != null&&videos!= "") {
+            videoView.setVideoPath(videos);
+            videoView.setVisibility(View.VISIBLE);
+            MediaController mediaController = new MediaController(this);
+            videoView.setMediaController(mediaController);
+        } else if (!images.isEmpty()) {
+            image.setVisibility(View.VISIBLE);
             Glide.with(this).load(images.get(0)).error(R.drawable.baseline_image_not_supported_24).into(image);
         }
 
@@ -88,8 +104,13 @@ public class NewsDetailsActivity extends AppCompatActivity {
             return insets;
         });
 
-        // 异步获取摘要
-        getSummaryInBackground(dataDTO.getContent());
+        // 获取摘要
+        summaryManager=new SummaryManager(this);
+        if(summaryManager.isSummaryExists(dataDTO.getNewsID())){
+            summary.setText(summaryManager.getSummary(dataDTO.getNewsID()));
+        }else{
+            getSummaryInBackground(dataDTO.getContent());
+        }
 
         //处理button点击
         button.setOnClickListener(new View.OnClickListener() {
@@ -103,8 +124,8 @@ public class NewsDetailsActivity extends AppCompatActivity {
         });
 
         //在数据库中添加一条元素
-        Gson gson=new Gson();
-        HistoryManager historyManager=new HistoryManager(this);
+        Gson gson = new Gson();
+        HistoryManager historyManager = new HistoryManager(this);
         historyManager.insertHistory(dataDTO.getNewsID(), gson.toJson(dataDTO));
     }
 
@@ -113,6 +134,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
             try {
                 String summaryText = getSummary(content);
                 mainHandler.post(() -> summary.setText(summaryText));
+                summaryManager.insertSummary(dataDTO.getNewsID(), summaryText);
             } catch (Exception e) {
                 Log.e("NewsDetailsActivity", "Error fetching summary", e);
             }

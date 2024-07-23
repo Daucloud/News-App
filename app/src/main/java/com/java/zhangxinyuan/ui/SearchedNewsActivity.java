@@ -20,7 +20,7 @@ import com.java.zhangxinyuan.databinding.ActivitySearchedNewsBinding;
 import com.java.zhangxinyuan.utils.FetchNewsAPI;
 import com.java.zhangxinyuan.utils.Assistant;
 import com.java.zhangxinyuan.utils.NewsInfo;
-import com.java.zhangxinyuan.utils.adapter.NewsListAdapter;
+import com.java.zhangxinyuan.utils.NewsListAdapter;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,25 +28,25 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class SearchedNewsActivity extends AppCompatActivity {
 
-        private ActivitySearchedNewsBinding binding;
-        RecyclerView recyclerView;
-        SwipeRefreshLayout swipeRefreshLayout;
-        ProgressBar progressBar;
-        NewsListAdapter newListAdapter;
-        Toolbar toolbar;
+    private ActivitySearchedNewsBinding binding;
+    RecyclerView recyclerView;
+    SwipeRefreshLayout swipeRefreshLayout;
+    ProgressBar progressBar;
+    NewsListAdapter newListAdapter;
+    Toolbar toolbar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding=ActivitySearchedNewsBinding.inflate(getLayoutInflater());
+        binding = ActivitySearchedNewsBinding.inflate(getLayoutInflater());
         View root = binding.getRoot();
         recyclerView = binding.newsRecyclerView;
         swipeRefreshLayout = binding.swipeRefreshLayout;
-        progressBar=binding.progressBar;
+        progressBar = binding.progressBar;
         newListAdapter = new NewsListAdapter(this);
         recyclerView.setAdapter(newListAdapter);
-        toolbar=binding.toolbar;
+        toolbar = binding.toolbar;
 
         AtomicInteger pageSize = new AtomicInteger(1);
         String size = "";
@@ -63,7 +63,7 @@ public class SearchedNewsActivity extends AppCompatActivity {
             public void onSuccess(List<NewsInfo.DataDTO> newsList) {
                 new Handler(Looper.getMainLooper()).post(() -> {
                     newListAdapter.setListData(newsList);
-                    Log.d("-------------------", "onSuccess: "+newsList.size());
+                    Log.d("-------------------", "onSuccess: " + newsList.size());
                 });
             }
 
@@ -71,7 +71,12 @@ public class SearchedNewsActivity extends AppCompatActivity {
             @Override
             public void onFailure(Exception e) {
                 Log.d("----------------------------", "onFailure: 111111111111111111111111111");
-                Toast.makeText(SearchedNewsActivity.this, "数据获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
+                SearchedNewsActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SearchedNewsActivity.this, "数据获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 
@@ -91,6 +96,7 @@ public class SearchedNewsActivity extends AppCompatActivity {
                                 swipeRefreshLayout.setRefreshing(false);
                             });
                         }
+
                         @Override
                         public void onFailure(Exception e) {
                             Toast.makeText(SearchedNewsActivity.this, "新闻获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
@@ -107,7 +113,7 @@ public class SearchedNewsActivity extends AppCompatActivity {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
                     progressBar.setVisibility(View.VISIBLE);
-                    page.set(Integer.toString(pageSize.get()+1));
+                    page.set(Integer.toString(pageSize.get() + 1));
                     fetchNewsAPI.getHttpData(size, startDate, endDate.get(), words, categories, page.get(), new FetchNewsAPI.OnNewsFetchedListener() {
                         @Override
                         public void onSuccess(List<NewsInfo.DataDTO> newsList) {
@@ -117,6 +123,7 @@ public class SearchedNewsActivity extends AppCompatActivity {
                                 progressBar.setVisibility(View.GONE);
                             });
                         }
+
                         @Override
                         public void onFailure(Exception e) {
                             Toast.makeText(SearchedNewsActivity.this, "新闻获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
@@ -128,7 +135,7 @@ public class SearchedNewsActivity extends AppCompatActivity {
         });
 
         //设置recyclerView的点击事件
-        newListAdapter.setOnItemClickListener(new NewsListAdapter.OnItemClickListener(){
+        newListAdapter.setOnItemClickListener(new NewsListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(NewsInfo.DataDTO dataDTO, int position) {
                 Log.d("-----------------------------", "onItemClick: recyclerView clicked");

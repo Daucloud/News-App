@@ -37,7 +37,7 @@ public class SelectFragment extends BottomSheetDialogFragment {
     );
 
     // 定义分类列表
-    public static ArrayList<String> categories=new ArrayList<>();
+    public static List<String> categories=new ArrayList<>();
 
 
     public static SelectFragment newInstance() {
@@ -47,7 +47,6 @@ public class SelectFragment extends BottomSheetDialogFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 设置主题样式
         setStyle(STYLE_NORMAL, R.style.BottomSheetDialogTheme);
     }
 
@@ -61,8 +60,8 @@ public class SelectFragment extends BottomSheetDialogFragment {
         assert bundle != null;
         categories.clear();
         ArrayList<String>foo=bundle.getStringArrayList("categories");
-        Log.d("======================", "onCreateView: "+foo.size());
-        categories.addAll(Objects.requireNonNull(foo));
+        categories.addAll(foo);
+        Log.d("======================", "onCreateView: "+categories.size());
 
         //回退事件
         binding.toolbar.setNavigationOnClickListener(
@@ -118,20 +117,18 @@ public class SelectFragment extends BottomSheetDialogFragment {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            String category = categories.get(position);
-            if(categories.contains(category)){
-                holder.button.setSelected(true);
-            }
+            String category =CATEGORIES.get(position);
             holder.button.setText(category);
+            boolean ok=categories.contains(category);
+            holder.button.setSelected(ok);
 
-            // TODO: 处理按钮点击事件，例如更改颜色或选中状态
             holder.button.setOnClickListener(v -> {
                 holder.button.setSelected(!holder.button.isSelected());
 
-             if(!holder.button.isSelected()&&categories.contains(category))   {
+             if(!holder.button.isSelected()&&ok)   {
                     categories.remove(category);
              }
-             else if(holder.button.isSelected()&&!categories.contains(category)){
+             else if(holder.button.isSelected()&&!ok){
                  categories.add(category);
              }
 
@@ -140,7 +137,7 @@ public class SelectFragment extends BottomSheetDialogFragment {
 
         @Override
         public int getItemCount() {
-            return categories.size();
+            return CATEGORIES.size();
         }
     }
 }

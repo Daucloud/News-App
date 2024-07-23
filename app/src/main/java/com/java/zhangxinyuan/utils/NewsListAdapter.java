@@ -1,6 +1,7 @@
-package com.java.zhangxinyuan.utils.adapter;
+package com.java.zhangxinyuan.utils;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.java.zhangxinyuan.R;
-import com.java.zhangxinyuan.utils.NewsInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +58,8 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyHold
         Log.d(TAG, "onBindViewHolder: position = " + position + ", viewType = " + holder.type);
         NewsInfo.DataDTO dataDTO = mDataDTOList.get(position);
         holder.title.setText(dataDTO.getTitle());
+        boolean ok=new HistoryManager(mContext).isHistoryExists(dataDTO.getNewsID());
+        holder.title.setTextColor(ok?Color.GRAY:Color.BLACK);
         holder.description.setText(dataDTO.getPublisher() + " | " + dataDTO.getPublishTime());
 
         ArrayList<String> images = dataDTO.getImage();

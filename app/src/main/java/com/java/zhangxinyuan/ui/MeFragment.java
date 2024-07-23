@@ -29,7 +29,6 @@ public class MeFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                // TODO: 跳转到历史记录页面
                 Intent intent=new Intent(getContext(),HistoryActivity.class);
                                 startActivity(intent);
             }

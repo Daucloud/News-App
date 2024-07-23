@@ -17,7 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.java.zhangxinyuan.utils.adapter.NewsListAdapter;
+import com.java.zhangxinyuan.utils.NewsListAdapter;
 import com.java.zhangxinyuan.databinding.FragmentTabsNewsBinding;
 import com.java.zhangxinyuan.utils.FetchNewsAPI;
 import com.java.zhangxinyuan.utils.Assistant;
@@ -57,7 +57,7 @@ public class TabNewsFragment extends Fragment {
         View root = binding.getRoot();
         recyclerView = binding.newsRecyclerView;
         swipeRefreshLayout = binding.swipeRefreshLayout;
-        progressBar=binding.progressBar;
+        progressBar = binding.progressBar;
         newsListAdapter = new NewsListAdapter(getContext());
         recyclerView.setAdapter(newsListAdapter);
 
@@ -78,6 +78,7 @@ public class TabNewsFragment extends Fragment {
                     newsListAdapter.setListData(newsList);
                 });
             }
+
             @Override
             public void onFailure(Exception e) {
                 Log.d("----------------------------", "onFailure: 111111111111111111111111111");
@@ -85,7 +86,7 @@ public class TabNewsFragment extends Fragment {
             }
         });
 
-       //设置下拉刷新的监听器
+        //设置下拉刷新的监听器
         swipeRefreshLayout.setOnRefreshListener(
                 () -> {
                     endDate.set(Assistant.getEndDate());
@@ -100,6 +101,7 @@ public class TabNewsFragment extends Fragment {
                                 swipeRefreshLayout.setRefreshing(false);
                             });
                         }
+
                         @Override
                         public void onFailure(Exception e) {
                             Toast.makeText(getActivity(), "新闻获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
@@ -115,8 +117,8 @@ public class TabNewsFragment extends Fragment {
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                   progressBar.setVisibility(View.VISIBLE);
-                    page.set(Integer.toString(pageSize.get()+1));
+                    progressBar.setVisibility(View.VISIBLE);
+                    page.set(Integer.toString(pageSize.get() + 1));
                     fetchNewsAPI.getHttpData(size, startDate, endDate.get(), words, categories, page.get(), new FetchNewsAPI.OnNewsFetchedListener() {
                         @Override
                         public void onSuccess(List<NewsInfo.DataDTO> newsList) {
@@ -126,9 +128,15 @@ public class TabNewsFragment extends Fragment {
                                 progressBar.setVisibility(View.GONE);
                             });
                         }
+
                         @Override
                         public void onFailure(Exception e) {
-                            Toast.makeText(getActivity(), "新闻获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getActivity(), "新闻获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                             progressBar.setVisibility(View.GONE);
                         }
                     });
@@ -137,7 +145,7 @@ public class TabNewsFragment extends Fragment {
         });
 
         //设置recyclerView的点击事件
-        newsListAdapter.setOnItemClickListener(new NewsListAdapter.OnItemClickListener(){
+        newsListAdapter.setOnItemClickListener(new NewsListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(NewsInfo.DataDTO dataDTO, int position) {
                 Log.d("-----------------------------", "onItemClick: recyclerView clicked");

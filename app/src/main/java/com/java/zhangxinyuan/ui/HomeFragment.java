@@ -13,7 +13,9 @@ import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -34,6 +36,7 @@ public class HomeFragment extends Fragment {
     private Button button;
     private ImageButton imageButton;
     private TabLayout tabLayout;
+    private FragmentStateAdapter fragmentStateAdapter;
     private ArrayList<String> categories = new ArrayList<>(Arrays.asList("全部", "娱乐", "军事", "教育", "文化", "健康", "财经", "体育", "汽车", "科技", "社会"));
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -44,9 +47,7 @@ public class HomeFragment extends Fragment {
         imageButton = binding.imageButton;
         tabLayout = binding.tabLayout;
         viewPager2 = binding.viewPager2;
-
-        //设置适配器
-        viewPager2.setAdapter(new FragmentStateAdapter(this) {
+        fragmentStateAdapter = new FragmentStateAdapter(this) {
             @NonNull
             @Override
             public Fragment createFragment(int position) {
@@ -57,7 +58,10 @@ public class HomeFragment extends Fragment {
             public int getItemCount() {
                 return categories.size();
             }
-        });
+        };
+
+        //设置适配器
+        viewPager2.setAdapter(fragmentStateAdapter);
 
         //tabLayout点击事件
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -108,7 +112,7 @@ public class HomeFragment extends Fragment {
                                            public void onClick(View v) {
                                                SelectFragment selectFragment = SelectFragment.newInstance();
                                                Bundle bundle = new Bundle();
-                                               bundle.putStringArrayList("categories", categories);
+                                               bundle.putStringArrayList("categories", new ArrayList<>(categories.subList(1, categories.size())));
                                                selectFragment.setArguments(bundle);
                                                getChildFragmentManager().beginTransaction()
                                                        .replace(R.id.select_fragment_container, selectFragment)
@@ -117,24 +121,43 @@ public class HomeFragment extends Fragment {
                                            }
                                        }
         );
-        // 监听子 Fragment 传递的数据
+//         监听子 Fragment 传递的数据
         getChildFragmentManager().setFragmentResultListener("requestKey", this,
-            new FragmentResultListener() {
-                @Override
-                public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                    // 获取数据
-                    categories.clear();
-                    categories.add("全部");
-                    categories.addAll(Objects.requireNonNull(result.getStringArrayList("categories")));
-                    // 处理结果数据
-                }
-            });
+                new FragmentResultListener() {
+                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                        // 获取数据
+                        categories.clear();
+                        categories.add("全部");
+                        categories.addAll(Objects.requireNonNull(result.getStringArrayList("categories")));
+                        Log.d("------------------------------------", "onFragmentResult: " + categories.size());
+                        if (categories != null) {
+                            // Refresh the TabLayout
+                            tabLayout.removeAllTabs(); // Remove all existing tabs
+                            for (String category : categories) {
+                                tabLayout.addTab(tabLayout.newTab().setText(category));
+                            }
+                        }
+                    }
+                });
         return root;
     }
+
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("-----------------------------------", "onResume: 111111111111111111111111111");
+        FragmentManager fragmentManager = getParentFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+//        fragmentTransaction.replace(R.id.fragment_home, new HomeFragment());
+        // 提交事务
+        fragmentTransaction.commit();
     }
 }

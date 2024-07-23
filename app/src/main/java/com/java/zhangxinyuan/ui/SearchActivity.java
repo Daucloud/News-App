@@ -27,6 +27,7 @@ public class SearchActivity extends AppCompatActivity {
     private SearchView searchView;
     private GridLayout gridLayout;
     private DatePicker startDatePicker, endDatePicker;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,7 @@ public class SearchActivity extends AppCompatActivity {
         gridLayout = binding.selections;
         startDatePicker = binding.datePicker1;
         endDatePicker = binding.datePicker2;
+
 
         //返回事件
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -72,7 +74,6 @@ String categoriesString = String.join(",", categories);
 
                                                   endTime.add(Calendar.DAY_OF_MONTH, 1);
 
-                                                  SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
                                                   String startTimeString = dateFormat.format(startTime.getTime());
                                                   String endTimeString = dateFormat.format(endTime.getTime());

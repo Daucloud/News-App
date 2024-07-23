@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:padding="8dp">
 
-    <TextView
+    <android.widget.TextView
         android:id="@+id/title_one_image"
         android:layout_width="309dp"
         android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
         android:scaleType="fitCenter"
         android:src="@drawable/ic_launcher_background" />
 
-    <TextView
+    <android.widget.TextView
         android:id="@+id/description_one_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

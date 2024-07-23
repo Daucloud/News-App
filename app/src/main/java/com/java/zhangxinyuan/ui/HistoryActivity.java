@@ -7,7 +7,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.java.zhangxinyuan.utils.adapter.NewsListAdapter;
+import com.java.zhangxinyuan.utils.NewsListAdapter;
 import com.java.zhangxinyuan.databinding.ActivityHistoryBinding;
 import com.java.zhangxinyuan.utils.HistoryManager;
 import com.java.zhangxinyuan.utils.NewsInfo;
