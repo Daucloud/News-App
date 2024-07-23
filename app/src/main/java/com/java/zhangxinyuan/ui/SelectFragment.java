@@ -1,5 +1,7 @@
 package com.java.zhangxinyuan.ui;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
@@ -14,6 +16,7 @@ import android.widget.Button;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.java.zhangxinyuan.R;
+import com.java.zhangxinyuan.databinding.FragmentHomeBinding;
 import com.java.zhangxinyuan.databinding.FragmentSelectListDialogItemBinding;
 import com.java.zhangxinyuan.databinding.FragmentSelectListDialogBinding;
 
@@ -30,6 +33,7 @@ public class SelectFragment extends BottomSheetDialogFragment {
 
     private static final Logger log = LoggerFactory.getLogger(SelectFragment.class);
     private FragmentSelectListDialogBinding binding;
+    private FragmentHomeBinding homeBinding;
 
     // 定义固定分类列表
     private static final List<String> CATEGORIES = Arrays.asList(
@@ -42,12 +46,6 @@ public class SelectFragment extends BottomSheetDialogFragment {
 
     public static SelectFragment newInstance() {
         return new SelectFragment();
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setStyle(STYLE_NORMAL, R.style.BottomSheetDialogTheme);
     }
 
     @Nullable

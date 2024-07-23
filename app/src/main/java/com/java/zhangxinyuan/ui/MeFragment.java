@@ -38,7 +38,8 @@ public class MeFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                // TODO: 跳转到收藏页面
+                Intent intent=new Intent(getContext(),FavoritesActivity.class);
+                startActivity(intent);
             }
         });
 

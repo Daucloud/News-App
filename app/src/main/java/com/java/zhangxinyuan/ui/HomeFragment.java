@@ -118,6 +118,7 @@ public class HomeFragment extends Fragment {
                                                        .replace(R.id.select_fragment_container, selectFragment)
                                                        .addToBackStack(null)
                                                        .commit();
+                                               binding.selectFragmentContainer.setBackgroundColor(Color.WHITE);
                                            }
                                        }
         );
@@ -137,6 +138,7 @@ public class HomeFragment extends Fragment {
                                 tabLayout.addTab(tabLayout.newTab().setText(category));
                             }
                         }
+                        binding.selectFragmentContainer.setBackgroundColor(Color.TRANSPARENT);
                     }
                 });
         return root;
@@ -149,15 +151,4 @@ public class HomeFragment extends Fragment {
         binding = null;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("-----------------------------------", "onResume: 111111111111111111111111111");
-        FragmentManager fragmentManager = getParentFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-//        fragmentTransaction.replace(R.id.fragment_home, new HomeFragment());
-        // 提交事务
-        fragmentTransaction.commit();
-    }
 }

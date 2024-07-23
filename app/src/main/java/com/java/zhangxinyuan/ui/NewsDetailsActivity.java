@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.java.zhangxinyuan.databinding.ActivityNewsDetailsBinding;
 import com.java.zhangxinyuan.utils.DBHelper;
+import com.java.zhangxinyuan.utils.FavoritesManager;
 import com.java.zhangxinyuan.utils.HistoryManager;
 import com.java.zhangxinyuan.utils.NewsInfo;
 import com.java.zhangxinyuan.utils.SummaryManager;
@@ -51,6 +53,8 @@ public class NewsDetailsActivity extends AppCompatActivity {
     private Button button;
     private VideoView videoView;
     private SummaryManager summaryManager;
+    private ImageButton imageButton;
+    private FavoritesManager favoritesManager=new FavoritesManager(this);
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -72,6 +76,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
         toolbar = binding.toolbar;
         button = binding.searchButton;
         videoView = binding.newsVideo;
+        imageButton=binding.imageButton;
 
         assert dataDTO != null;
         title.setText(dataDTO.getTitle());
@@ -120,6 +125,24 @@ public class NewsDetailsActivity extends AppCompatActivity {
                 Intent intent = new Intent(NewsDetailsActivity.this, SearchActivity.class);
                 // 启动目标活动
                 startActivity(intent);
+            }
+        });
+
+        //处理imageButton的点击状态
+        boolean ok=favoritesManager.isFavoriteExists(dataDTO.getNewsID());
+        imageButton.setSelected(ok);
+
+        //处理imageButton点击
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (imageButton.isSelected()) {
+                    imageButton.setSelected(false);
+                    favoritesManager.deleteFavorite(dataDTO.getNewsID());
+                } else {
+                    imageButton.setSelected(true);
+                    favoritesManager.insertFavorite(dataDTO.getNewsID(),new Gson().toJson(dataDTO));
+                }
             }
         });
 
