@@ -1,25 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="MyTabLayoutTextAppearance" parent="TextAppearance.Design.Tab">
-    <item name="android:textSize">18sp</item>
-    <!-- 可以根据需要调整字体大小 -->
-</style>
+        <item name="android:textSize">18sp</item>
+        <!-- 可以根据需要调整字体大小 -->
+    </style>
     <!-- 自定义主题 -->
-<style name="CustomTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="CustomTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- 自定义 Toolbar 样式 -->
+        <item name="toolbarStyle">@style/CustomToolbarStyle</item>
+        <!-- 自定义 Button 样式 -->
+        <item name="buttonStyle">@style/CustomButtonStyle</item>
+    </style>
+
     <!-- 自定义 Toolbar 样式 -->
-    <item name="toolbarStyle">@style/CustomToolbarStyle</item>
+    <style name="CustomToolbarStyle" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">@color/red_500</item>
+    </style>
+
     <!-- 自定义 Button 样式 -->
-    <item name="buttonStyle">@style/CustomButtonStyle</item>
-</style>
+    <style name="CustomButtonStyle">
+        <item name="android:background">@drawable/select_button_background</item>
+        <item name="android:textColor">@drawable/select_button_text</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">12dp</item>
+    </style>
+    <!-- BottomSheetDialogFragment style -->
+    <style name="BottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+    </style>
 
-<!-- 自定义 Toolbar 样式 -->
-<style name="CustomToolbarStyle" parent="Widget.AppCompat.Toolbar">
-    <item name="android:background">@color/red_500</item>
-</style>
-
-<!-- 自定义 Button 样式 -->
-<style name="CustomButtonStyle" parent="Widget.AppCompat.Button">
-    <item name="android:background">@color/grey</item>
-    <item name="android:textColor">@android:color/white</item>
-</style>
+    <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <!-- Set the background color here -->
+        <item name="android:background">#80000000</item> <!-- 半透明黑色 -->
+    </style>
 </resources>

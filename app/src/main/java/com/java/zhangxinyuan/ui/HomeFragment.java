@@ -1,11 +1,13 @@
 package com.java.zhangxinyuan.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
@@ -97,9 +99,9 @@ public class HomeFragment extends Fragment {
 
                                            @Override
                                            public void onClick(View v) {
-                                               SelectFragment selectFragment = SelectFragment.newInstance(30);
+                                               SelectFragment selectFragment = SelectFragment.newInstance();
                                                getChildFragmentManager().beginTransaction()
-                                                       .replace(R.id.fragment_home, selectFragment)
+                                                       .replace(R.id.select_fragment_container, selectFragment)
                                                        .addToBackStack(null)
                                                        .commit();
                                            }
