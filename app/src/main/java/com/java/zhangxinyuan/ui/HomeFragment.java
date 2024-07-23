@@ -3,6 +3,7 @@ package com.java.zhangxinyuan.ui;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -20,6 +22,11 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.java.zhangxinyuan.R;
 import com.java.zhangxinyuan.databinding.FragmentHomeBinding;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
@@ -27,7 +34,7 @@ public class HomeFragment extends Fragment {
     private Button button;
     private ImageButton imageButton;
     private TabLayout tabLayout;
-    private final String[] categories = {"全部", "娱乐", "军事", "教育", "文化", "健康", "财经", "体育", "汽车", "科技", "社会"};
+    private ArrayList<String> categories = new ArrayList<>(Arrays.asList("全部", "娱乐", "军事", "教育", "文化", "健康", "财经", "体育", "汽车", "科技", "社会"));
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -43,12 +50,12 @@ public class HomeFragment extends Fragment {
             @NonNull
             @Override
             public Fragment createFragment(int position) {
-                return TabNewsFragment.newInstance(categories[position]);
+                return TabNewsFragment.newInstance(categories.get(position));
             }
 
             @Override
             public int getItemCount() {
-                return categories.length;
+                return categories.size();
             }
         });
 
@@ -74,7 +81,7 @@ public class HomeFragment extends Fragment {
         TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
             @Override
             public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                tab.setText(categories[position]);
+                tab.setText(categories.get(position));
             }
         });
         tabLayoutMediator.attach();
@@ -100,6 +107,9 @@ public class HomeFragment extends Fragment {
                                            @Override
                                            public void onClick(View v) {
                                                SelectFragment selectFragment = SelectFragment.newInstance();
+                                               Bundle bundle = new Bundle();
+                                               bundle.putStringArrayList("categories", categories);
+                                               selectFragment.setArguments(bundle);
                                                getChildFragmentManager().beginTransaction()
                                                        .replace(R.id.select_fragment_container, selectFragment)
                                                        .addToBackStack(null)
@@ -107,7 +117,18 @@ public class HomeFragment extends Fragment {
                                            }
                                        }
         );
-
+        // 监听子 Fragment 传递的数据
+        getChildFragmentManager().setFragmentResultListener("requestKey", this,
+            new FragmentResultListener() {
+                @Override
+                public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                    // 获取数据
+                    categories.clear();
+                    categories.add("全部");
+                    categories.addAll(Objects.requireNonNull(result.getStringArrayList("categories")));
+                    // 处理结果数据
+                }
+            });
         return root;
     }
 
