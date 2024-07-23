@@ -69,6 +69,8 @@ dependencies {
     implementation(libs.material3)
     implementation(libs.activity)
     implementation(libs.databinding.runtime)
+    implementation(libs.legacy.support.v4)
+    implementation(libs.recyclerview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -83,4 +85,5 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest) // Use the latest version
     implementation(libs.oapi.java.sdk)
+    implementation(libs.material.v160)
 }
