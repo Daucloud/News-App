@@ -1,8 +1,9 @@
 package com.java.zhangxinyuan.ui;
 
-import android.content.Context;
-import android.graphics.Color;
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -25,9 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class SelectFragment extends BottomSheetDialogFragment {
 
@@ -41,8 +41,8 @@ public class SelectFragment extends BottomSheetDialogFragment {
     );
 
     // 定义分类列表
-    public static List<String> categories=new ArrayList<>();
-
+    public static List<String> selectedCategories = new ArrayList<>(CATEGORIES);
+    public static List<String> unselectedCategories = new ArrayList<>();
 
     public static SelectFragment newInstance() {
         return new SelectFragment();
@@ -54,22 +54,20 @@ public class SelectFragment extends BottomSheetDialogFragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentSelectListDialogBinding.inflate(inflater, container, false);
 
-        Bundle bundle=getArguments();
+        Bundle bundle = getArguments();
         assert bundle != null;
-        categories.clear();
-        ArrayList<String>foo=bundle.getStringArrayList("categories");
-        categories.addAll(foo);
-        Log.d("======================", "onCreateView: "+categories.size());
+        selectedCategories.clear();
+        ArrayList<String> foo = bundle.getStringArrayList("categories");
+        selectedCategories.addAll(foo);
+        unselectedCategories.clear();
+        unselectedCategories.addAll(CATEGORIES);
+        unselectedCategories.removeAll(selectedCategories);
+
+        Log.d("======================", "onCreateView: " + selectedCategories.size());
 
         //回退事件
-        binding.toolbar.setNavigationOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dismiss();
-                    }
-                }
-        );
+        binding.toolbar.setNavigationOnClickListener(view -> dismiss());
+
         return binding.getRoot();
     }
 
@@ -81,16 +79,15 @@ public class SelectFragment extends BottomSheetDialogFragment {
         RecyclerView recyclerView = binding.recyclerView;
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         recyclerView.setAdapter(new ItemAdapter());
-
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Bundle bundle1=new Bundle();
-        bundle1.putStringArrayList("categories", (ArrayList<String>) categories);
-        Log.d("------------------", "onClick: "+categories.size());
-        getParentFragmentManager().setFragmentResult("requestKey",bundle1);
+        Bundle bundle1 = new Bundle();
+        bundle1.putStringArrayList("categories", (ArrayList<String>) selectedCategories);
+        Log.d("------------------", "onClick: " + selectedCategories.size());
+        getParentFragmentManager().setFragmentResult("requestKey", bundle1);
         binding = null;
     }
 
@@ -99,12 +96,18 @@ public class SelectFragment extends BottomSheetDialogFragment {
 
         ViewHolder(FragmentSelectListDialogItemBinding binding) {
             super(binding.getRoot());
-            button= binding.categoryCheck;
+            button = binding.categoryCheck;
+
+            // 在构造函数中设置按钮的晃动动画
+            ObjectAnimator animator = ObjectAnimator.ofFloat(button, "rotation", 0, 10, -10, 10, -10, 0);
+            animator.setDuration(500);
+            animator.setRepeatCount(ObjectAnimator.INFINITE);
+            animator.setRepeatMode(ObjectAnimator.REVERSE);
+            animator.start();
         }
     }
 
     private class ItemAdapter extends RecyclerView.Adapter<ViewHolder> {
-
 
         @NonNull
         @Override
@@ -112,30 +115,64 @@ public class SelectFragment extends BottomSheetDialogFragment {
             return new ViewHolder(FragmentSelectListDialogItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
         }
 
-
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            String category =CATEGORIES.get(position);
+            // 根据 position 获取数据源中的对应分类
+            String category;
+            boolean isSelected;
+
+            if (position < selectedCategories.size()) {
+                category = selectedCategories.get(position);
+                isSelected = true;
+            } else {
+                category = unselectedCategories.get(position - selectedCategories.size());
+                isSelected = false;
+            }
+
             holder.button.setText(category);
-            boolean ok=categories.contains(category);
-            holder.button.setSelected(ok);
+            holder.button.setSelected(isSelected);
 
             holder.button.setOnClickListener(v -> {
-                holder.button.setSelected(!holder.button.isSelected());
+                // 创建移动动画
+                ObjectAnimator moveAnimator = ObjectAnimator.ofFloat(holder.button, "translationX", 0, 50, 0);
+                moveAnimator.setDuration(300);
+                moveAnimator.setInterpolator(new DecelerateInterpolator());
+                moveAnimator.start();
 
-             if(!holder.button.isSelected()&&ok)   {
-                    categories.remove(category);
-             }
-             else if(holder.button.isSelected()&&!ok){
-                 categories.add(category);
-             }
+                moveAnimator.addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                    }
 
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        // 更新数据源
+                        if (isSelected) {
+                            selectedCategories.remove(category);
+                            unselectedCategories.add(category);
+                        } else {
+                            unselectedCategories.remove(category);
+                            selectedCategories.add(category);
+                        }
+
+                        // 使用 notifyDataSetChanged() 强制刷新整个列表
+                        notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+                    }
+                });
             });
         }
 
         @Override
         public int getItemCount() {
-            return CATEGORIES.size();
+            return selectedCategories.size() + unselectedCategories.size();
         }
     }
 }

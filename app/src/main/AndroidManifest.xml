@@ -19,9 +19,6 @@
             android:name=".ui.FavoritesActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.FavorirtesActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.HistoryActivity"
             android:exported="false" />
         <activity
