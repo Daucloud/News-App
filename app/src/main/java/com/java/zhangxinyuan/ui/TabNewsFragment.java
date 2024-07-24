@@ -1,9 +1,12 @@
 package com.java.zhangxinyuan.ui;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -20,9 +23,10 @@ import android.widget.Toast;
 import com.java.zhangxinyuan.utils.NewsListAdapter;
 import com.java.zhangxinyuan.databinding.FragmentTabsNewsBinding;
 import com.java.zhangxinyuan.utils.FetchNewsAPI;
-import com.java.zhangxinyuan.utils.Assistant;
 import com.java.zhangxinyuan.utils.NewsInfo;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -31,6 +35,7 @@ public class TabNewsFragment extends Fragment {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
+    private static final int REQUEST_CODE = 100;
     private FragmentTabsNewsBinding binding;
     private RecyclerView recyclerView;
     private NewsListAdapter newsListAdapter;
@@ -64,7 +69,7 @@ public class TabNewsFragment extends Fragment {
         AtomicInteger pageSize = new AtomicInteger(1);
         String size = "";
         String startDate = "2000-01-01 00:00:00";
-        AtomicReference<String> endDate = new AtomicReference<>(Assistant.getEndDate());
+        AtomicReference<String> endDate = new AtomicReference<>(getEndDate());
         String words = "";
         String categories = requireArguments().getString(ARG_PARAM1);
         AtomicReference<String> page = new AtomicReference<>(Integer.toString(100));
@@ -89,7 +94,7 @@ public class TabNewsFragment extends Fragment {
         //设置下拉刷新的监听器
         swipeRefreshLayout.setOnRefreshListener(
                 () -> {
-                    endDate.set(Assistant.getEndDate());
+                    endDate.set(getEndDate());
                     pageSize.set(1);
                     page.set(Integer.toString(pageSize.get()));
                     fetchNewsAPI.getHttpData(size, startDate, endDate.get(), words, categories, page.get(), new FetchNewsAPI.OnNewsFetchedListener() {
@@ -151,11 +156,42 @@ public class TabNewsFragment extends Fragment {
                 Log.d("-----------------------------", "onItemClick: recyclerView clicked");
                 Intent intent = new Intent(getActivity(), NewsDetailsActivity.class);
                 intent.putExtra("dataDTO", dataDTO);
-                startActivity(intent);
+                intent.putExtra("position", position);
+                startActivityForResult(intent, REQUEST_CODE);
+                Log.d("---------------", "onItemClick: asfjadslkfjalksdjflakdsjflkajf");
+                newsListAdapter.notifyItemChanged(position);
             }
         });
 
 
         return root;
+    }
+
+    public static String getEndDate() {
+        // 创建日期对象并获取当前时间
+        Date currentDate = new Date();
+        // 创建日期格式化对象
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        // 格式化日期对象为字符串
+        return dateFormat.format(currentDate);
+    }
+
+    public void updateColor(int position) {
+        newsListAdapter.notifyItemChanged(position);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // 更新 RecyclerView 子项
+            int position = data.getIntExtra("position", -1);
+            if (position != -1) {
+                RecyclerView.Adapter adapter = recyclerView.getAdapter();
+                if (adapter instanceof NewsListAdapter) {
+                    adapter.notifyItemChanged(position);
+                }
+            }
+        }
     }
 }

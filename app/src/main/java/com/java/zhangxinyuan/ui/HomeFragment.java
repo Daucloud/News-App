@@ -24,6 +24,9 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.java.zhangxinyuan.R;
 import com.java.zhangxinyuan.databinding.FragmentHomeBinding;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +42,7 @@ public class HomeFragment extends Fragment {
     private FragmentStateAdapter fragmentStateAdapter;
     private ArrayList<String> categories = new ArrayList<>(Arrays.asList("全部", "娱乐", "军事", "教育", "文化", "健康", "财经", "体育", "汽车", "科技", "社会"));
 
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
@@ -47,6 +51,42 @@ public class HomeFragment extends Fragment {
         imageButton = binding.imageButton;
         tabLayout = binding.tabLayout;
         viewPager2 = binding.viewPager2;
+
+        setupViewPagerAndTabs();
+
+        // Search button click event
+        button.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), SearchActivity.class);
+            startActivity(intent);
+        });
+
+        // Image button click event
+        imageButton.setOnClickListener(v -> {
+            SelectFragment selectFragment = SelectFragment.newInstance();
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList("categories", new ArrayList<>(categories.subList(1, categories.size())));
+            selectFragment.setArguments(bundle);
+            getChildFragmentManager().beginTransaction()
+                    .replace(R.id.select_fragment_container, selectFragment)
+                    .addToBackStack(null)
+                    .commit();
+            binding.selectFragmentContainer.setBackgroundColor(Color.WHITE);
+        });
+
+        // Listen for results from child fragments
+        getChildFragmentManager().setFragmentResultListener("requestKey", this,
+                (requestKey, result) -> {
+                    categories.clear();
+                    categories.add("全部");
+                    categories.addAll(Objects.requireNonNull(result.getStringArrayList("categories")));
+                    updateTabs();
+                    binding.selectFragmentContainer.setBackgroundColor(Color.TRANSPARENT);
+                });
+
+        return root;
+    }
+
+    private void setupViewPagerAndTabs() {
         fragmentStateAdapter = new FragmentStateAdapter(this) {
             @NonNull
             @Override
@@ -60,10 +100,8 @@ public class HomeFragment extends Fragment {
             }
         };
 
-        //设置适配器
         viewPager2.setAdapter(fragmentStateAdapter);
 
-        //tabLayout点击事件
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -72,83 +110,38 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
 
-        //设置tabLayout和viewPager2联动
-        TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(tabLayout, viewPager2, new TabLayoutMediator.TabConfigurationStrategy() {
-            @Override
-            public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                tab.setText(categories.get(position));
-            }
-        });
-        tabLayoutMediator.attach();
-
-        //SearchView点击事件：跳转到一个新的搜索界面
-        // 在MainActivity中找到SearchView
-
-// button点击事件
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 创建一个Intent来启动SearchResultsActivity
-                Intent intent = new Intent(getActivity(), SearchActivity.class);
-                // 启动目标活动
-                startActivity(intent);
-            }
-        });
-
-//imageButton点击事件
-
-        imageButton.setOnClickListener(new View.OnClickListener() {
-
-                                           @Override
-                                           public void onClick(View v) {
-                                               SelectFragment selectFragment = SelectFragment.newInstance();
-                                               Bundle bundle = new Bundle();
-                                               bundle.putStringArrayList("categories", new ArrayList<>(categories.subList(1, categories.size())));
-                                               selectFragment.setArguments(bundle);
-                                               getChildFragmentManager().beginTransaction()
-                                                       .replace(R.id.select_fragment_container, selectFragment)
-                                                       .addToBackStack(null)
-                                                       .commit();
-                                               binding.selectFragmentContainer.setBackgroundColor(Color.WHITE);
-                                           }
-                                       }
-        );
-//         监听子 Fragment 传递的数据
-        getChildFragmentManager().setFragmentResultListener("requestKey", this,
-                new FragmentResultListener() {
-                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                        // 获取数据
-                        categories.clear();
-                        categories.add("全部");
-                        categories.addAll(Objects.requireNonNull(result.getStringArrayList("categories")));
-                        Log.d("------------------------------------", "onFragmentResult: " + categories.size());
-                        if (categories != null) {
-                            // Refresh the TabLayout
-                            tabLayout.removeAllTabs(); // Remove all existing tabs
-                            for (String category : categories) {
-                                tabLayout.addTab(tabLayout.newTab().setText(category));
-                            }
-                        }
-                        binding.selectFragmentContainer.setBackgroundColor(Color.TRANSPARENT);
-                    }
-                });
-        return root;
+        new TabLayoutMediator(tabLayout, viewPager2, (tab, position) -> tab.setText(categories.get(position))).attach();
     }
 
+    private void updateTabs() {
+        tabLayout.removeAllTabs(); // Remove all existing tabs
+        for (String category : categories) {
+            tabLayout.addTab(tabLayout.newTab().setText(category));
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Get the current page
+        int currentItem = viewPager2.getCurrentItem();
+        // Notify the adapter to refresh the current page
+        if (fragmentStateAdapter != null && currentItem >= 0) {
+            Log.d("==========================", "onResume: 08988909999999999");
+            fragmentStateAdapter.notifyItemChanged(currentItem);
+        }
+    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
-
 }

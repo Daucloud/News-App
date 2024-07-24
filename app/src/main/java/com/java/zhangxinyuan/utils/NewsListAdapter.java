@@ -149,4 +149,5 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.MyHold
     public interface OnItemClickListener {
         void onItemClick(NewsInfo.DataDTO dataDTO, int position);
     }
+
 }

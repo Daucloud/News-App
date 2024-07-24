@@ -1,7 +1,5 @@
 package com.java.zhangxinyuan.ui;
 
-import static com.java.zhangxinyuan.utils.Assistant.getSummary;
-
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -35,8 +33,15 @@ import com.java.zhangxinyuan.utils.FavoritesManager;
 import com.java.zhangxinyuan.utils.HistoryManager;
 import com.java.zhangxinyuan.utils.NewsInfo;
 import com.java.zhangxinyuan.utils.SummaryManager;
+import com.zhipu.oapi.ClientV4;
+import com.zhipu.oapi.Constants;
+import com.zhipu.oapi.service.v4.model.ChatCompletionRequest;
+import com.zhipu.oapi.service.v4.model.ChatMessage;
+import com.zhipu.oapi.service.v4.model.ChatMessageRole;
+import com.zhipu.oapi.service.v4.model.ModelApiResponse;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -55,6 +60,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
     private SummaryManager summaryManager;
     private ImageButton imageButton;
     private FavoritesManager favoritesManager=new FavoritesManager(this);
+    private int position;
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private Handler mainHandler = new Handler(Looper.getMainLooper());
@@ -64,6 +70,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityNewsDetailsBinding.inflate(getLayoutInflater());
         dataDTO = (NewsInfo.DataDTO) getIntent().getSerializableExtra("dataDTO");
+        position=getIntent().getIntExtra("position",0);
         View root = binding.getRoot();
         setContentView(root);
 
@@ -99,6 +106,9 @@ public class NewsDetailsActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent=new Intent();
+                intent.putExtra("position",position);
+                setResult(RESULT_OK,intent);
                 finish();
             }
         });
@@ -169,4 +179,24 @@ public class NewsDetailsActivity extends AppCompatActivity {
         super.onDestroy();
         executorService.shutdown();
     }
+
+    public String getSummary(String content) {
+        final String API_KEY = "4396d92d403d36d546790c1d9da8d6cc.kCxpZSgF5tnxs3Qq";
+        final ClientV4 client = new ClientV4.Builder(API_KEY).build();
+        List<ChatMessage> messages = List.of(new ChatMessage[]{
+                new ChatMessage(ChatMessageRole.SYSTEM.value(),
+                        "你的任务是为用户给定的新闻文本生成一篇总结摘要。注意，除了摘要的正文，不需要添加任何额外内容。")
+                , new ChatMessage(ChatMessageRole.USER.value(),
+                content)});
+
+        ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
+                .model(Constants.ModelChatGLM4)
+                .stream(Boolean.FALSE)
+                .invokeMethod(Constants.invokeMethod)
+                .messages(messages)
+                .build();
+        ModelApiResponse invokeModelApiResp = client.invokeModelApi(chatCompletionRequest);
+        return invokeModelApiResp.getData().getChoices().get(0).getMessage().getContent().toString();
+    }
+
 }

@@ -1,6 +1,8 @@
 package com.java.zhangxinyuan.ui;
 
 
+import static com.java.zhangxinyuan.ui.TabNewsFragment.getEndDate;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,7 +20,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.java.zhangxinyuan.databinding.ActivitySearchedNewsBinding;
 import com.java.zhangxinyuan.utils.FetchNewsAPI;
-import com.java.zhangxinyuan.utils.Assistant;
 import com.java.zhangxinyuan.utils.NewsInfo;
 import com.java.zhangxinyuan.utils.NewsListAdapter;
 
@@ -84,7 +85,7 @@ public class SearchedNewsActivity extends AppCompatActivity {
         com.java.zhangxinyuan.utils.FetchNewsAPI fetchNewsAPI = new FetchNewsAPI();
         swipeRefreshLayout.setOnRefreshListener(
                 () -> {
-                    endDate.set(Assistant.getEndDate());
+                    endDate.set(getEndDate());
                     pageSize.set(1);
                     page.set(Integer.toString(pageSize.get()));
                     fetchNewsAPI.getHttpData(size, startDate, endDate.get(), words, categories, page.get(), new FetchNewsAPI.OnNewsFetchedListener() {
@@ -147,7 +148,6 @@ public class SearchedNewsActivity extends AppCompatActivity {
 
         //返回事件
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                                                 @Override
                                                  public void onClick(View view) {
                                                      finish();
                                                  }
