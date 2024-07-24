@@ -58,12 +58,15 @@ public class SearchedNewsActivity extends AppCompatActivity {
         AtomicReference<String> page = new AtomicReference<>(getIntent().getStringExtra(String.valueOf(pageSize)));
 
         //获取新闻
-        FetchNewsAPI FetchNewsAPI = new FetchNewsAPI();
+        FetchNewsAPI FetchNewsAPI = new FetchNewsAPI(this);
         FetchNewsAPI.getHttpData(size, startDate, endDate.get(), words, categories, page.get(), new FetchNewsAPI.OnNewsFetchedListener() {
             @Override
             public void onSuccess(List<NewsInfo.DataDTO> newsList) {
                 new Handler(Looper.getMainLooper()).post(() -> {
                     newListAdapter.setListData(newsList);
+                    if(newsList.isEmpty()){
+                        Toast.makeText(SearchedNewsActivity.this, "没有找到相关新闻", Toast.LENGTH_SHORT).show();
+                    }
                     Log.d("-------------------", "onSuccess: " + newsList.size());
                 });
             }
@@ -75,14 +78,19 @@ public class SearchedNewsActivity extends AppCompatActivity {
                 SearchedNewsActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(SearchedNewsActivity.this, "数据获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
+                        new Thread(() -> {
+                            // 切换到主线程显示 Toast
+                            new Handler(Looper.getMainLooper()).post(() ->
+                                    Toast.makeText(SearchedNewsActivity.this, "搜索失败", Toast.LENGTH_SHORT).show()
+                            );
+                        }).start();
                     }
                 });
             }
         });
 
         //设置下拉刷新的监听器
-        com.java.zhangxinyuan.utils.FetchNewsAPI fetchNewsAPI = new FetchNewsAPI();
+        com.java.zhangxinyuan.utils.FetchNewsAPI fetchNewsAPI = new FetchNewsAPI(this);
         swipeRefreshLayout.setOnRefreshListener(
                 () -> {
                     endDate.set(getEndDate());
@@ -100,7 +108,12 @@ public class SearchedNewsActivity extends AppCompatActivity {
 
                         @Override
                         public void onFailure(Exception e) {
-                            Toast.makeText(SearchedNewsActivity.this, "新闻获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
+                            new Thread(() -> {
+                                // 切换到主线程显示 Toast
+                                new Handler(Looper.getMainLooper()).post(() ->
+                                        Toast.makeText(SearchedNewsActivity.this, "数据获取失败", Toast.LENGTH_SHORT).show()
+                                );
+                            }).start();
                             swipeRefreshLayout.setRefreshing(false);
                         }
                     });
@@ -127,7 +140,12 @@ public class SearchedNewsActivity extends AppCompatActivity {
 
                         @Override
                         public void onFailure(Exception e) {
-                            Toast.makeText(SearchedNewsActivity.this, "新闻获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
+                            new Thread(() -> {
+                                // 切换到主线程显示 Toast
+                                new Handler(Looper.getMainLooper()).post(() ->
+                                        Toast.makeText(SearchedNewsActivity.this, "数据获取失败", Toast.LENGTH_SHORT).show()
+                                );
+                            }).start();
                             progressBar.setVisibility(View.GONE);
                         }
                     });

@@ -58,6 +58,7 @@
                 <TextView
                     android:id="@+id/news_source"
                     android:layout_width="wrap_content"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="News Source"
                     android:textColor="#666666"
@@ -65,6 +66,7 @@
 
                 <TextView
                     android:layout_width="wrap_content"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text=" | "
                     android:textColor="#666666"
@@ -73,19 +75,18 @@
                 <TextView
                     android:id="@+id/news_time"
                     android:layout_width="wrap_content"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="2024-07-22 14:00"
                     android:textColor="#666666"
                     android:textSize="14sp" />
 
-                <TextView
-                    android:layout_width="140dp"
-                    android:layout_height="wrap_content" />
-
                 <ImageButton
                     android:id="@+id/image_button"
                     android:layout_width="wrap_content"
+                    android:layout_weight="1"
                     android:layout_height="match_parent"
+                    android:layout_marginStart="100dp"
                     android:background="@color/white"
                     android:gravity="end"
                     android:src="@drawable/favorites_button" />

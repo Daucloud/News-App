@@ -47,6 +47,7 @@ import java.util.concurrent.Executors;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 public class NewsDetailsActivity extends AppCompatActivity {
@@ -73,6 +74,9 @@ public class NewsDetailsActivity extends AppCompatActivity {
         position=getIntent().getIntExtra("position",0);
         View root = binding.getRoot();
         setContentView(root);
+        Intent intent=new Intent();
+        intent.putExtra("position",position);
+        setResult(RESULT_OK,intent);
 
         title = binding.newsTitle;
         source = binding.newsSource;
@@ -169,6 +173,12 @@ public class NewsDetailsActivity extends AppCompatActivity {
                 mainHandler.post(() -> summary.setText(summaryText));
                 summaryManager.insertSummary(dataDTO.getNewsID(), summaryText);
             } catch (Exception e) {
+                new Thread(() -> {
+                    // 切换到主线程显示 Toast
+                    new Handler(Looper.getMainLooper()).post(() ->
+                            Toast.makeText(NewsDetailsActivity.this, "摘要生成失败", Toast.LENGTH_SHORT).show()
+                    );
+                }).start();
                 Log.e("NewsDetailsActivity", "Error fetching summary", e);
             }
         });
@@ -177,6 +187,13 @@ public class NewsDetailsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        executorService.shutdown();
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
         executorService.shutdown();
     }
 

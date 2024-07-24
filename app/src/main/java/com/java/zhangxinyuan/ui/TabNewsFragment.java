@@ -25,6 +25,9 @@ import com.java.zhangxinyuan.databinding.FragmentTabsNewsBinding;
 import com.java.zhangxinyuan.utils.FetchNewsAPI;
 import com.java.zhangxinyuan.utils.NewsInfo;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +39,7 @@ public class TabNewsFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final int REQUEST_CODE = 100;
+    private static final Logger log = LoggerFactory.getLogger(TabNewsFragment.class);
     private FragmentTabsNewsBinding binding;
     private RecyclerView recyclerView;
     private NewsListAdapter newsListAdapter;
@@ -75,7 +79,7 @@ public class TabNewsFragment extends Fragment {
         AtomicReference<String> page = new AtomicReference<>(Integer.toString(100));
 
         //获取新闻
-        FetchNewsAPI fetchNewsAPI = new FetchNewsAPI();
+        FetchNewsAPI fetchNewsAPI = new FetchNewsAPI(getContext());
         fetchNewsAPI.getHttpData(size, startDate, endDate.get(), words, categories, page.get(), new FetchNewsAPI.OnNewsFetchedListener() {
             @Override
             public void onSuccess(List<NewsInfo.DataDTO> newsList) {
@@ -86,8 +90,12 @@ public class TabNewsFragment extends Fragment {
 
             @Override
             public void onFailure(Exception e) {
-                Log.d("----------------------------", "onFailure: 111111111111111111111111111");
-                Toast.makeText(getActivity(), "数据获取失败，请稍后重试", Toast.LENGTH_SHORT).show();
+                new Thread(() -> {
+                    // 切换到主线程显示 Toast
+                    new Handler(Looper.getMainLooper()).post(() ->
+                            Toast.makeText(getActivity(), "数据获取失败", Toast.LENGTH_SHORT).show()
+                    );
+                }).start();
             }
         });
 
@@ -189,6 +197,7 @@ public class TabNewsFragment extends Fragment {
             if (position != -1) {
                 RecyclerView.Adapter adapter = recyclerView.getAdapter();
                 if (adapter instanceof NewsListAdapter) {
+                    Log.d("=======================", "onActivityResult: 99999999999999999999999999");
                     adapter.notifyItemChanged(position);
                 }
             }
